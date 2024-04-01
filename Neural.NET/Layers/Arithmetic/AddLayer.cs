@@ -1,6 +1,6 @@
 ﻿using MathNet.Numerics.LinearAlgebra.Single;
 
-namespace Neural.NET.Layers.Arithmetic
+namespace NeuralNET.Layers.Arithmetic
 {
     /// <summary>
     /// 加算層

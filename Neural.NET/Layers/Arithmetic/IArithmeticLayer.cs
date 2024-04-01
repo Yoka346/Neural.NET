@@ -2,7 +2,7 @@
 
 using NeuralNET.Layers;
 
-namespace Neural.NET.Layers.Arithmetic
+namespace NeuralNET.Layers.Arithmetic
 {
     /// <summary>
     /// 算術計算を行う層が実装するインターフェース.

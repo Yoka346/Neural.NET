@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using MathNet.Numerics.LinearAlgebra.Single;
 
-namespace Neural.NET
+namespace NeuralET
 {
     internal static class MatrixExtensions
     {

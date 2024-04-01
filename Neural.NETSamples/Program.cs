@@ -3,7 +3,7 @@
 using MathNet.Numerics.Providers.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 
-using Neural.NET.Layers.Arithmetic;
+using NeuralNET.Layers.Arithmetic;
 
 // Intel Math Kernal Library(MKL)を有効化する.
 if (LinearAlgebraControl.TryUseNativeMKL())

@@ -2,7 +2,7 @@
 
 using NeuralNET;
 
-namespace Neural.NET.Layers.Arithmetic
+namespace NeuralNET.Layers.Arithmetic
 {
     public class MultiplyLayer : IArithmeticLayer
     {

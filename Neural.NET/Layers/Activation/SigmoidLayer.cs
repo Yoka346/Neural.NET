@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using MathNet.Numerics.LinearAlgebra.Single;
 
-namespace Neural.NET.Layers.Activation
+namespace NeuralNET.Layers.Activation
 {
     /// <summary>
     /// 標準シグモイド関数

@@ -2,7 +2,7 @@
 
 using NeuralNET.Layers;
 
-namespace Neural.NET.Layers.Activation
+namespace NeuralNET.Layers.Activation
 {
     /// <summary>
     /// 活性化層(活性化関数)が実装するインターフェース
