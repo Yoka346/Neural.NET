@@ -1,6 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra.Single;
-
-namespace NeuralNET.Layers
+﻿namespace NeuralNET.Layers
 {
     /// <summary>
     /// 計算グラフの各層が実装するインターフェース

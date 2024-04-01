@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Schema;
-
-using MathNet.Numerics.LinearAlgebra.Single;
+﻿using MathNet.Numerics.LinearAlgebra.Single;
 
 using NeuralNET;
 
@@ -17,11 +10,13 @@ namespace Neural.NET.Layers.Arithmetic
         DenseMatrix? y;
         bool saveRef;
 
+        public MultiplyLayer() : this(false) { }
+
         /// <summary>
         /// 乗算層のインスタンスを生成します.
         /// </summary>
         /// <param name="saveInputRef">この層への入力の参照を保持するかどうか</param>
-        public MultiplyLayer(bool saveInputRef = false) => this.saveRef = saveInputRef;
+        public MultiplyLayer(bool saveInputRef) => this.saveRef = saveInputRef;
 
         public DenseMatrix Forward(DenseMatrix x, DenseMatrix y, DenseMatrix res)
         {

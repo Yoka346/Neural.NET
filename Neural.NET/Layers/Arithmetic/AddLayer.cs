@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using MathNet.Numerics.LinearAlgebra.Single;
-using NeuralNET.Layers;
+﻿using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace Neural.NET.Layers.Arithmetic
 {
     /// <summary>
-    /// 加算レイヤー
+    /// 加算層
     /// </summary>
     public class AddLayer : IArithmeticLayer
     {
