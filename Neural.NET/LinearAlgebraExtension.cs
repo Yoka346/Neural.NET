@@ -216,6 +216,13 @@ namespace NeuralNET
             }
         }
 
+        public static void PointwiseSigmoid(this DenseMatrix x, DenseMatrix y)
+        {
+            x.Negate(y);
+            y.PointwiseExp(y);
+            y.Add(1.0f, y);
+            y.Divide(1.0f, y);
+        }
 
         internal static DenseMatrix CopyToOrClone(this DenseMatrix src, DenseMatrix? dest)
         {

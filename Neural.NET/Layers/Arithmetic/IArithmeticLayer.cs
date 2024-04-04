@@ -1,7 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra.Single;
 
-using NeuralNET.Layers;
-
 namespace NeuralNET.Layers.Arithmetic
 {
     /// <summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace NeuralNET.Layers.Activation
@@ -14,35 +15,57 @@ namespace NeuralNET.Layers.Activation
     public class SigmoidLayer : IActivationLayer
     {
         DenseMatrix? output;
-        bool SaveOutputRef;
+        readonly bool SAVE_OUTPUT_REF;
 
         public SigmoidLayer() : this(false) { }
 
-        public SigmoidLayer(bool saveOutputRef) => this.SaveOutputRef = saveOutputRef;
+        public SigmoidLayer(bool saveOutputRef) => this.SAVE_OUTPUT_REF = saveOutputRef;
 
         public DenseMatrix Forward(DenseMatrix x, DenseMatrix y)
         {
-            x.Negate(y);
-            y.PointwiseExp(y);
-            y.Add(1.0f, y);
-            y.Divide(1.0f, y);
+            x.PointwiseSigmoid(y);
+            SaveOutput(y);
             return y;
         }
 
         public DenseMatrix Forward(DenseMatrix x)
         {
             var y = (DenseMatrix)x.Clone();
-            return Forward(x, y);
+            Forward(x, y);
+            SaveOutput(y);
+            return y;
         }
 
         public DenseMatrix Backward(DenseMatrix dOutput, DenseMatrix res)
         {
-            throw new NotImplementedException();
+            if (this.output is null)
+                throw new InvalidOperationException("Backward method must be called after forward.");
+
+            this.output.Negate(res);
+            res.Add(1.0f, res);
+            res.PointwiseMultiply(this.output);
+            res.PointwiseMultiply(dOutput);
+            return res;
         }
 
         public DenseMatrix Backward(DenseMatrix dOutput)
         {
-            throw new NotImplementedException();
+            if (this.output is null)
+                throw new InvalidOperationException("Backward method must be called after forward.");
+
+            var res = DenseMatrix.Create(this.output.RowCount, this.output.ColumnCount, 0.0f);
+            return Backward(dOutput, res);
+        }
+
+        void SaveOutput(DenseMatrix output)
+        {
+            if (this.SAVE_OUTPUT_REF)
+            {
+                this.output = output;
+                return;
+            }
+
+            this.output = output.CopyToOrClone(this.output);
         }
     }
 }
