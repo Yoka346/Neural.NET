@@ -1,23 +1,23 @@
-﻿
+
 using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace NeuralNET.Layers.Activation
 {
     /// <summary>
-    /// 標準シグモイド関数
+    /// tanh関数
     /// </summary>
-    public class SigmoidLayer : IActivationLayer
+    public class TanhLayer : IActivationLayer
     {
         DenseMatrix? output;
         readonly bool SAVE_OUTPUT_REF;
 
-        public SigmoidLayer() : this(false) { }
+        public TanhLayer() : this(false) { }
 
-        public SigmoidLayer(bool saveOutputRef) => this.SAVE_OUTPUT_REF = saveOutputRef;
+        public TanhLayer(bool saveOutputRef) => this.SAVE_OUTPUT_REF = saveOutputRef;
 
         public DenseMatrix Forward(DenseMatrix x, DenseMatrix y)
         {
-            x.PointwiseSigmoid(y);
+            x.PointwiseTanh(y);
             SaveOutput(y);
             return y;
         }
@@ -35,9 +35,9 @@ namespace NeuralNET.Layers.Activation
             if (this.output is null)
                 throw new InvalidOperationException("Backward method must be called after forward.");
 
-            this.output.Negate(res);
+            this.output.PointwiseMultiply(this.output, res);
+            res.Negate(res);
             res.Add(1.0f, res);
-            res.PointwiseMultiply(this.output);
             res.PointwiseMultiply(dOutput);
             return res;
         }

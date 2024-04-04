@@ -1,30 +1,30 @@
-﻿
+
 using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace NeuralNET.Layers.Activation
 {
     /// <summary>
-    /// 標準シグモイド関数
+    /// ReLU関数
     /// </summary>
-    public class SigmoidLayer : IActivationLayer
+    public class ReLULayer : IActivationLayer
     {
         DenseMatrix? output;
         readonly bool SAVE_OUTPUT_REF;
 
-        public SigmoidLayer() : this(false) { }
+        public ReLULayer() : this(false) { }
 
-        public SigmoidLayer(bool saveOutputRef) => this.SAVE_OUTPUT_REF = saveOutputRef;
+        public ReLULayer(bool saveOutputRef) => this.SAVE_OUTPUT_REF = saveOutputRef;
 
         public DenseMatrix Forward(DenseMatrix x, DenseMatrix y)
         {
-            x.PointwiseSigmoid(y);
+            x.PointwiseMaximum(0.0f, y);
             SaveOutput(y);
             return y;
         }
 
         public DenseMatrix Forward(DenseMatrix x)
         {
-            var y = DenseMatrix.Create(x.RowCount, x.RowCount, 0.0f);
+            var y = DenseMatrix.Create(x.RowCount, x.ColumnCount, 0.0f);
             Forward(x, y);
             SaveOutput(y);
             return y;
@@ -35,9 +35,7 @@ namespace NeuralNET.Layers.Activation
             if (this.output is null)
                 throw new InvalidOperationException("Backward method must be called after forward.");
 
-            this.output.Negate(res);
-            res.Add(1.0f, res);
-            res.PointwiseMultiply(this.output);
+            this.output.PointwiseSign(res);
             res.PointwiseMultiply(dOutput);
             return res;
         }
