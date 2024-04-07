@@ -1,22 +1,22 @@
-﻿using MathNet.Numerics.LinearAlgebra.Single;
+using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace NeuralNET.Layers.Activation
 {
     /// <summary>
-    /// 標準シグモイド関数
+    /// ソフトマックス関数
     /// </summary>
-    public class SigmoidLayer : IActivationLayer
+    public class SoftmaxLayer : IActivationLayer
     {
         DenseMatrix? output;
         readonly bool SAVE_OUTPUT_REF;
 
-        public SigmoidLayer() : this(false) { }
+        public SoftmaxLayer() : this(false) { }
 
-        public SigmoidLayer(bool saveOutputRef) => this.SAVE_OUTPUT_REF = saveOutputRef;
+        public SoftmaxLayer(bool saveOutputRef) => this.SAVE_OUTPUT_REF = saveOutputRef;
 
         public DenseMatrix Forward(DenseMatrix x, DenseMatrix y)
         {
-            x.PointwiseSigmoid(y);
+            x.ColumnSoftmax(y);
             SaveOutput(y);
             return y;
         }
@@ -25,6 +25,7 @@ namespace NeuralNET.Layers.Activation
         {
             var y = DenseMatrix.Create(x.RowCount, x.ColumnCount, 0.0f);
             Forward(x, y);
+            SaveOutput(y);
             return y;
         }
 
@@ -33,10 +34,10 @@ namespace NeuralNET.Layers.Activation
             if (this.output is null)
                 throw new InvalidOperationException("Backward method must be called after forward.");
 
-            this.output.Negate(res);
-            res.Add(1.0f, res);
+            this.output.PointwiseMultiply(dOutput, res);
+            var colSums = (DenseVector)res.ColumnSums();
+            dOutput.SubtractRowVector(colSums, res);
             res.PointwiseMultiply(this.output, res);
-            res.PointwiseMultiply(dOutput, res);
             return res;
         }
 
@@ -45,7 +46,7 @@ namespace NeuralNET.Layers.Activation
             if (this.output is null)
                 throw new InvalidOperationException("Backward method must be called after forward.");
 
-            var res = DenseMatrix.Create(this.output.RowCount, this.output.ColumnCount, 0.0f);
+            var res = DenseMatrix.Create(dOutput.RowCount, dOutput.ColumnCount, 0.0f);
             return Backward(dOutput, res);
         }
 

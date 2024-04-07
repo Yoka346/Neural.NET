@@ -36,7 +36,7 @@ namespace NeuralNET.Layers.Activation
                 throw new InvalidOperationException("Backward method must be called after forward.");
 
             this.output.PointwiseSign(res);
-            res.PointwiseMultiply(dOutput);
+            res.PointwiseMultiply(dOutput, res);
             return res;
         }
 

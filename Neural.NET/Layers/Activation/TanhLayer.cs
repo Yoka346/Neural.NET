@@ -24,7 +24,7 @@ namespace NeuralNET.Layers.Activation
 
         public DenseMatrix Forward(DenseMatrix x)
         {
-            var y = DenseMatrix.Create(x.RowCount, x.RowCount, 0.0f);
+            var y = DenseMatrix.Create(x.RowCount, x.ColumnCount, 0.0f);
             Forward(x, y);
             SaveOutput(y);
             return y;
@@ -38,7 +38,7 @@ namespace NeuralNET.Layers.Activation
             this.output.PointwiseMultiply(this.output, res);
             res.Negate(res);
             res.Add(1.0f, res);
-            res.PointwiseMultiply(dOutput);
+            res.PointwiseMultiply(dOutput, res);
             return res;
         }
 
