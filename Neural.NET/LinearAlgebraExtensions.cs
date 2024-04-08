@@ -235,9 +235,30 @@ namespace NeuralNET
 
         public static void ColumnSoftmax(this DenseMatrix x, DenseMatrix y)
         {
-            x.PointwiseExp(y);
+            var colMax = x.ColumnMax();
+            x.SubtractRowVector(colMax, y);
+            y.PointwiseExp(y);
             var colSums = (DenseVector)y.ColumnSums();
             y.DivideByRowVector(colSums, y);
+        }
+
+        public static DenseVector ColumnMax(this DenseMatrix x)
+        {
+            var maxVec = DenseVector.Create(x.ColumnCount, 0.0f);
+            var xArray = x.AsColumnMajorArray();
+            Parallel.For(0, x.ColumnCount, j =>
+            {
+                var col = xArray.AsSpan(j * x.RowCount, x.RowCount);
+                var max = float.NegativeInfinity;
+                for(var i = 0; i < col.Length; i++)
+                {
+                    if(col[i] > max)
+                        max = col[i];
+                }
+                maxVec[j] = max;
+            });
+
+            return maxVec;
         }
 
         internal static DenseMatrix CopyToOrClone(this DenseMatrix src, DenseMatrix? dest)
