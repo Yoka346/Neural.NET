@@ -17,6 +17,9 @@ namespace NeuralNET.Layers.Activation
 
         public DenseMatrix Forward(DenseMatrix x, DenseMatrix y)
         {
+            if(!x.DimensionEqualsTo(y))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(y), nameof(x.RowCount), nameof(x.ColumnCount));
+
             x.PointwiseMaximum(0.0f, y);
             SaveOutput(y);
             return y;
@@ -33,7 +36,10 @@ namespace NeuralNET.Layers.Activation
         public DenseMatrix Backward(DenseMatrix dOutput, DenseMatrix res)
         {
             if (this.output is null)
-                throw new InvalidOperationException("Backward method must be called after forward.");
+                throw Exceptions.CreateBackwardBeforeForwardException();
+
+            if(dOutput.DimensionEqualsTo(this.output))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(dOutput), "ForwardResult.RowCount", "ForwardResult.ColumnCount");
 
             this.output.PointwiseSign(res);
             res.PointwiseMultiply(dOutput, res);
@@ -43,7 +49,7 @@ namespace NeuralNET.Layers.Activation
         public DenseMatrix Backward(DenseMatrix dOutput)
         {
             if (this.output is null)
-                throw new InvalidOperationException("Backward method must be called after forward.");
+                throw Exceptions.CreateBackwardBeforeForwardException();
 
             var res = DenseMatrix.Create(this.output.RowCount, this.output.ColumnCount, 0.0f);
             return Backward(dOutput, res);

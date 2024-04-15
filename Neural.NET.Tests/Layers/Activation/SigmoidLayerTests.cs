@@ -8,7 +8,7 @@ public class SigmoidLayerTests
     [TestMethod]
     public void BackwardTest() 
     {
-        Utils.TestBackward(new SigmoidLayer(saveOutputRef:true));
-        Utils.TestBackward(new SigmoidLayer(saveOutputRef:false));
+        Utils.TestPointwiseBackward(new SigmoidLayer(saveOutputRef:true));
+        Utils.TestPointwiseBackward(new SigmoidLayer(saveOutputRef:false));
     }
 }

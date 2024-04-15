@@ -25,14 +25,13 @@ namespace NeuralNET.Layers.Activation
         {
             var y = DenseMatrix.Create(x.RowCount, x.ColumnCount, 0.0f);
             Forward(x, y);
-            SaveOutput(y);
             return y;
         }
 
         public DenseMatrix Backward(DenseMatrix dOutput, DenseMatrix res)
         {
             if (this.output is null)
-                throw new InvalidOperationException("Backward method must be called after forward.");
+                throw Exceptions.CreateBackwardBeforeForwardException();
 
             this.output.PointwiseMultiply(dOutput, res);
             var colSums = (DenseVector)res.ColumnSums();
@@ -44,7 +43,7 @@ namespace NeuralNET.Layers.Activation
         public DenseMatrix Backward(DenseMatrix dOutput)
         {
             if (this.output is null)
-                throw new InvalidOperationException("Backward method must be called after forward.");
+                throw Exceptions.CreateBackwardBeforeForwardException();
 
             var res = DenseMatrix.Create(dOutput.RowCount, dOutput.ColumnCount, 0.0f);
             return Backward(dOutput, res);

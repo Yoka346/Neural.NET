@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
-
+using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace NeuralNET
@@ -16,16 +16,10 @@ namespace NeuralNET
         public static void AddColumnVector(this DenseMatrix lhs, DenseVector rhs, DenseMatrix sum)
         {
             if (lhs.RowCount != rhs.Count)
-            {
-                var message = $"Vector dimension must agree: {nameof(rhs)} is {lhs.RowCount}.";
-                throw new ArgumentException(message, nameof(rhs));
-            }
+                throw Exceptions.CreateInvalidVectorDimensionException(nameof(rhs), nameof(lhs.RowCount));
 
-            if (lhs.RowCount != sum.RowCount || lhs.ColumnCount != sum.ColumnCount)
-            {
-                var message = $"Matrix dimensions must agree: {nameof(sum)} is {lhs.RowCount}x{lhs.ColumnCount}.";
-                throw new ArgumentException(message, nameof(sum));
-            }
+            if (!lhs.DimensionEqualsTo(sum))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(sum), nameof(lhs.RowCount), nameof(lhs.ColumnCount));
 
             const int UNROLL_STEP_NUM = 8;
             var lhsArray = lhs.AsColumnMajorArray();
@@ -36,7 +30,8 @@ namespace NeuralNET
             {
                 var l = lhsArray.AsSpan(j * numRows);
                 var s = sumArray.AsSpan(j * numRows);
-                var end = (numRows % UNROLL_STEP_NUM == 0) ? numRows : numRows - UNROLL_STEP_NUM;
+                var rest = numRows % UNROLL_STEP_NUM;
+                var end = numRows - rest;
                 for (var i = 0; i < end; i += UNROLL_STEP_NUM)
                 {
                     var leftVec = Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(l[i..]));
@@ -60,16 +55,10 @@ namespace NeuralNET
         public static void AddRowVector(this DenseMatrix lhs, DenseVector rhs, DenseMatrix sum)
         {
             if (lhs.ColumnCount != rhs.Count)
-            {
-                var message = $"Vector dimension must agree: {nameof(rhs)} is {lhs.ColumnCount}.";
-                throw new ArgumentException(message, nameof(rhs));
-            }
+                throw Exceptions.CreateInvalidVectorDimensionException(nameof(rhs), nameof(lhs.ColumnCount));
 
-            if (lhs.RowCount != sum.RowCount || lhs.ColumnCount != sum.ColumnCount)
-            {
-                var message = $"Matrix dimensions must agree: {nameof(sum)} is {lhs.RowCount}x{lhs.ColumnCount}.";
-                throw new ArgumentException(message, nameof(sum));
-            }
+            if (!lhs.DimensionEqualsTo(sum))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(sum), nameof(lhs.RowCount), nameof(lhs.ColumnCount));
 
             const int UNROLL_STEP_NUM = 8;
             var lhsArray = lhs.AsColumnMajorArray();
@@ -80,7 +69,8 @@ namespace NeuralNET
                 var l = lhsArray.AsSpan(j * numRows);
                 var s = sumArray.AsSpan(j * numRows);
                 var rhsVec = Vector256.Create(rhs[j]);
-                var end = (numRows % UNROLL_STEP_NUM == 0) ? numRows : numRows - UNROLL_STEP_NUM;
+                var rest = numRows % UNROLL_STEP_NUM;
+                var end = numRows - rest;
                 for (var i = 0; i < end; i += UNROLL_STEP_NUM)
                 {
                     var lhsVec = Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(l[i..]));
@@ -103,16 +93,10 @@ namespace NeuralNET
         public static void SubtractColumnVector(this DenseMatrix lhs, DenseVector rhs, DenseMatrix diff)
         {
             if (lhs.RowCount != rhs.Count)
-            {
-                var message = $"Vector dimension must agree: {nameof(rhs)} is {lhs.RowCount}.";
-                throw new ArgumentException(message, nameof(rhs));
-            }
+                throw Exceptions.CreateInvalidVectorDimensionException(nameof(rhs), nameof(lhs.RowCount));
 
-            if (lhs.RowCount != diff.RowCount || lhs.ColumnCount != diff.ColumnCount)
-            {
-                var message = $"Matrix dimensions must agree: {nameof(diff)} is {lhs.RowCount}x{lhs.ColumnCount}.";
-                throw new ArgumentException(message, nameof(diff));
-            }
+            if (!lhs.DimensionEqualsTo(diff))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(diff), nameof(lhs.RowCount), nameof(lhs.ColumnCount));
 
             const int UNROLL_STEP_NUM = 8;
             var lhsArray = lhs.AsColumnMajorArray();
@@ -123,7 +107,8 @@ namespace NeuralNET
             {
                 var l = lhsArray.AsSpan(j * numRows);
                 var d = sumArray.AsSpan(j * numRows);
-                var end = (numRows % UNROLL_STEP_NUM == 0) ? numRows : numRows - UNROLL_STEP_NUM;
+                var rest = numRows % UNROLL_STEP_NUM;
+                var end = numRows - rest;
                 for (var i = 0; i < end; i += UNROLL_STEP_NUM)
                 {
                     var leftVec = Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(l[i..]));
@@ -147,16 +132,10 @@ namespace NeuralNET
         public static void SubtractRowVector(this DenseMatrix lhs, DenseVector rhs, DenseMatrix diff)
         {
             if (lhs.ColumnCount != rhs.Count)
-            {
-                var message = $"Vector dimension must agree: {nameof(rhs)} is {lhs.ColumnCount}.";
-                throw new ArgumentException(message, nameof(rhs));
-            }
+                throw Exceptions.CreateInvalidVectorDimensionException(nameof(rhs), nameof(lhs.ColumnCount));
 
-            if (lhs.RowCount != diff.RowCount || lhs.ColumnCount != diff.ColumnCount)
-            {
-                var message = $"Matrix dimensions must agree: {nameof(diff)} is {lhs.RowCount}x{lhs.ColumnCount}.";
-                throw new ArgumentException(message, nameof(diff));
-            }
+            if (!lhs.DimensionEqualsTo(diff))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(diff), nameof(lhs.RowCount), nameof(lhs.ColumnCount));
 
             const int UNROLL_STEP_NUM = 8;
             var lhsArray = lhs.AsColumnMajorArray();
@@ -167,7 +146,8 @@ namespace NeuralNET
                 var l = lhsArray.AsSpan(j * numRows);
                 var d = diffArray.AsSpan(j * numRows);
                 var rhsVec = Vector256.Create(rhs[j]);
-                var end = (numRows % UNROLL_STEP_NUM == 0) ? numRows : numRows - UNROLL_STEP_NUM;
+                var rest = numRows % UNROLL_STEP_NUM;
+                var end = numRows - rest;
                 for (var i = 0; i < end; i += UNROLL_STEP_NUM)
                 {
                     var lhsVec = Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(l[i..]));
@@ -191,16 +171,10 @@ namespace NeuralNET
         public static void DivideByRowVector(this DenseMatrix lhs, DenseVector rhs, DenseMatrix quotient)
         {
             if (lhs.ColumnCount != rhs.Count)
-            {
-                var message = $"Vector dimension must agree: {nameof(rhs)} is {lhs.ColumnCount}.";
-                throw new ArgumentException(message, nameof(rhs));
-            }
+                throw Exceptions.CreateInvalidVectorDimensionException(nameof(rhs), nameof(lhs.ColumnCount));
 
-            if (lhs.RowCount != quotient.RowCount || lhs.ColumnCount != quotient.ColumnCount)
-            {
-                var message = $"Matrix dimensions must agree: {nameof(quotient)} is {lhs.RowCount}x{lhs.ColumnCount}.";
-                throw new ArgumentException(message, nameof(quotient));
-            }
+            if (!lhs.DimensionEqualsTo(quotient))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(quotient), nameof(lhs.RowCount), nameof(lhs.ColumnCount));
 
             const int UNROLL_STEP_NUM = 8;
             var lhsArray = lhs.AsColumnMajorArray();
@@ -211,7 +185,8 @@ namespace NeuralNET
                 var l = lhsArray.AsSpan(j * numRows);
                 var q = quotientArray.AsSpan(j * numRows);
                 var rhsVec = Vector256.Create(rhs[j]);
-                var end = (numRows % UNROLL_STEP_NUM == 0) ? numRows : numRows - UNROLL_STEP_NUM;
+                var rest = numRows % UNROLL_STEP_NUM;
+                var end = numRows - rest;
                 for (var i = 0; i < end; i += UNROLL_STEP_NUM)
                 {
                     var lhsVec = Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(l[i..]));
@@ -227,6 +202,9 @@ namespace NeuralNET
 
         public static void PointwiseSigmoid(this DenseMatrix x, DenseMatrix y)
         {
+            if(!x.DimensionEqualsTo(y))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(y), nameof(x.RowCount), nameof(y.RowCount));
+
             x.Negate(y);
             y.PointwiseExp(y);
             y.Add(1.0f, y);
@@ -235,6 +213,9 @@ namespace NeuralNET
 
         public static void ColumnSoftmax(this DenseMatrix x, DenseMatrix y)
         {
+            if(!x.DimensionEqualsTo(y))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(y), nameof(x.RowCount), nameof(y.RowCount));
+
             var colMax = x.ColumnMax();
             x.SubtractRowVector(colMax, y);
             y.PointwiseExp(y);
@@ -261,12 +242,15 @@ namespace NeuralNET
             return maxVec;
         }
 
+        public static bool DimensionEqualsTo<T>(this Matrix<T> lhs, Matrix<T> rhs) where T : struct, IEquatable<T>, IFormattable
+            => lhs.RowCount == rhs.RowCount && rhs.ColumnCount == lhs.ColumnCount;
+
         internal static DenseMatrix CopyToOrClone(this DenseMatrix src, DenseMatrix? dest)
         {
             if (dest is null)
                 return (DenseMatrix)src.Clone();
 
-            if (dest.RowCount != src.RowCount || dest.ColumnCount != src.ColumnCount)
+            if (!dest.DimensionEqualsTo(src))
                 return (DenseMatrix)src.Clone();
 
             src.CopyTo(dest);

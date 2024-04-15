@@ -8,7 +8,7 @@ public class TanhLayerTests
     [TestMethod]
     public void BackwardTest() 
     {
-        Utils.TestBackward(new TanhLayer(saveOutputRef:true));
-        Utils.TestBackward(new TanhLayer(saveOutputRef:false));
+        Utils.TestPointwiseBackward(new TanhLayer(saveOutputRef:true));
+        Utils.TestPointwiseBackward(new TanhLayer(saveOutputRef:false));
     }
 }
