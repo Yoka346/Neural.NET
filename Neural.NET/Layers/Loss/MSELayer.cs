@@ -21,8 +21,7 @@ namespace NeuralNET.Layers.Loss
             y.Subtract(t, this.diff);
             this.diff.PointwiseMultiply(this.diff, this.loss);
 
-            var lossArray = this.loss.AsColumnMajorArray();
-            return lossArray.Sum() / lossArray.Length;
+            return this.loss.AsColumnMajorArray().Sum() / this.loss.ColumnCount;
         }
 
         public DenseMatrix Backward(DenseMatrix res)
@@ -30,8 +29,11 @@ namespace NeuralNET.Layers.Loss
             if(this.diff is null || this.loss is null)
                 throw Exceptions.CreateBackwardBeforeForwardException();
 
-            this.diff.Multiply(2.0f, res);
-            res.Divide(this.diff.AsColumnMajorArray().Length, res);
+            if (res.RowCount != this.diff.RowCount || res.ColumnCount != this.diff.ColumnCount)
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(res), this.diff.RowCount.ToString(), this.diff.ColumnCount.ToString());
+
+
+            this.diff.Multiply(2.0f / this.diff.ColumnCount, res);
             return res;
         }
 

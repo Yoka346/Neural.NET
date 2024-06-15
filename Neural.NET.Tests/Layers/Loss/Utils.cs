@@ -1,5 +1,7 @@
 namespace NeuralNETTests.Layers.Loss;
 
+using System.Diagnostics;
+
 using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra.Single;
 
@@ -15,7 +17,7 @@ public static class Utils
     /// <returns></returns>
     public static DenseMatrix CalcNumericalGrad(ILossLayer layer, DenseMatrix y, DenseMatrix t)
     {
-        const float EPSILON = 1.0e-4f;
+        const float EPSILON = 1.0e-3f;
 
         var grads = DenseMatrix.Create(y.RowCount, y.ColumnCount, 0.0f);
         var gradsArray = grads.AsColumnMajorArray();
@@ -33,6 +35,7 @@ public static class Utils
             yArray[i] = tmp;
 
             gradsArray[i] = (f1 - f0) / (2.0f * EPSILON);
+            Debug.Assert(!float.IsNaN(gradsArray[i]));
         }
 
         return  grads;

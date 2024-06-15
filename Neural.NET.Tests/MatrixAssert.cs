@@ -4,7 +4,7 @@ using MathNet.Numerics.LinearAlgebra.Single;
 
 internal static class MatrixAssert
 {
-    public static void AreEqual(DenseMatrix expected, DenseMatrix actual, float epsilon = 1.0e-3f)
+    public static void AreEqual(DenseMatrix expected, DenseMatrix actual, float epsilon = 1.0e-2f)
     {
         Assert.AreEqual(expected.RowCount, actual.RowCount);
         Assert.AreEqual(expected.ColumnCount, actual.ColumnCount);

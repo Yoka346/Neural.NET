@@ -10,7 +10,7 @@ namespace NeuralNET.Layers.Loss
         readonly bool SAVE_INPUT_REF;
         DenseMatrix? y;
         DenseMatrix? t;
-        DenseMatrix? cache;
+        DenseMatrix? loss;
 
         public CrossEntropyLayer() : this(false) { }
 
@@ -20,13 +20,13 @@ namespace NeuralNET.Layers.Loss
         {
             SaveInput(y, t);
 
-            if(this.cache is null || this.cache.RowCount != y.RowCount || this.cache.ColumnCount != y.ColumnCount)
-                this.cache = DenseMatrix.Create(y.RowCount, y.ColumnCount, 0.0f);
+            if(this.loss is null || this.loss.RowCount != y.RowCount || this.loss.ColumnCount != y.ColumnCount)
+                this.loss = DenseMatrix.Create(y.RowCount, y.ColumnCount, 0.0f);
 
-            y.PointwiseLog(this.cache);
-            this.cache.PointwiseMultiply(t, this.cache);
+            y.PointwiseLog(this.loss);
+            this.loss.PointwiseMultiply(t, this.loss);
             
-            return -1.0f / y.ColumnCount * this.cache.AsColumnMajorArray().Sum(); 
+            return -1.0f / y.ColumnCount * this.loss.AsColumnMajorArray().Sum(); 
         }
 
         public DenseMatrix Backward(DenseMatrix res)
