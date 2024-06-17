@@ -223,6 +223,20 @@ namespace NeuralNET
             y.DivideByRowVector(colSums, y);
         }
 
+        public static void ColumnLogSoftmax(this DenseMatrix x, DenseMatrix y)
+        {
+            if(!x.DimensionEqualsTo(y))
+                throw Exceptions.CreateInvalidMatrixDimensionException(nameof(y), nameof(x.RowCount), nameof(y.RowCount));
+
+            var colMax = x.ColumnMax();
+            x.SubtractRowVector(colMax, y);
+            y.PointwiseExp(y);
+            var colSums = (DenseVector)y.ColumnSums();
+            colSums.PointwiseLog(colSums);
+            colSums.Add(colMax, colSums);
+            x.SubtractRowVector(colSums, y);
+        }
+
         public static DenseVector ColumnMax(this DenseMatrix x)
         {
             var maxVec = DenseVector.Create(x.ColumnCount, 0.0f);
