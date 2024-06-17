@@ -38,7 +38,7 @@ namespace NeuralNET.Layers.Loss
                 throw Exceptions.CreateBackwardBeforeForwardException();
 
             this.logSoftmax.PointwiseExp(res);
-            res.Subtract(t, res);
+            res.Subtract(this.t, res);
             res.Multiply(1.0f / this.logSoftmax.ColumnCount, res);
             return res;
         }
@@ -46,7 +46,7 @@ namespace NeuralNET.Layers.Loss
         public DenseMatrix Backward()
         {
             if(this.logSoftmax is null)
-                throw new Exception("Backward method must be called after forward.");
+                throw Exceptions.CreateBackwardBeforeForwardException();
 
             var res = DenseMatrix.Create(this.logSoftmax.RowCount, this.logSoftmax.ColumnCount, 0.0f);
             return Backward(res);
